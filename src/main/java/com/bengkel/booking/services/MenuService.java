@@ -1,9 +1,6 @@
 package com.bengkel.booking.services;
 
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +21,7 @@ public class MenuService {
 	private static boolean isLogin = false;
 	private static int numbOfAttempts = 1;
 	private static int suspendTime = 10; // in second
-	private static List<Object[]> suspendedUsers = new ArrayList<Object[]>();
+	private static List<Object[]> suspendedCustomers = new ArrayList<Object[]>();
 
 	private static LocalTime suspendUntil = LocalTime.now().plusSeconds(-suspendTime);
 
@@ -33,7 +30,7 @@ public class MenuService {
 		String[] loginMenuArr = { "Login" };
 
 		menu.createMenu(chosenMenu -> {
-			AuthService.removeExpiredSuspend(suspendedUsers);
+			AuthService.removeExpiredSuspend(suspendedCustomers);
 			login(chosenMenu);
 			if (isLogin) {
 				mainMenu();
@@ -61,10 +58,10 @@ public class MenuService {
 			String customerId = input.validate("Masukkan Customer ID", "Customer ID tidak terdaftar!",
 					id -> Validation.isValidUser(listAllCustomers, id));
 
-			Object[] suspendedUser = AuthService.getSuspendedUserById(suspendedUsers, customerId);
-			if (Validation.isSuspendedUser(suspendedUser)) {
+			Object[] suspendedCustomer = AuthService.getSuspendedUserById(suspendedCustomers, customerId);
+			if (Validation.isSuspendedCustomer(suspendedCustomer)) {
 				System.out.println("Customer ID ini tersuspend. Coba lagi dalam "
-						+ AuthService.getLeftTimeSuspend((LocalTime) suspendedUser[1])
+						+ AuthService.getLeftTimeSuspend((LocalTime) suspendedCustomer[1])
 						+ " detik");
 				isLogin = false;
 				menu.enterToContinue();
@@ -84,7 +81,7 @@ public class MenuService {
 
 				if (Validation.isReachedLimitAttemptsAuth(numbOfAttempts) && !isLogin) {
 					suspendUntil = LocalTime.now().plusSeconds(suspendTime);
-					suspendedUsers.add(new Object[] { customerId, suspendUntil });
+					suspendedCustomers.add(new Object[] { customerId, suspendUntil });
 					System.out.println("Percobaan sudah 3 kali. Coba lagi dalam " + suspendTime + " detik.");
 					menu.enterToContinue();
 

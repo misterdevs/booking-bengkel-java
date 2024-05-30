@@ -20,7 +20,7 @@ public class Validation {
 		return numbOfAttempts >= limitAttempts;
 	}
 
-	public static boolean isSuspendedUser(Object[] suspendedUser) {
-		return suspendedUser != null && LocalTime.now().compareTo(((LocalTime) suspendedUser[1])) < 0;
+	public static boolean isSuspendedCustomer(Object[] suspendedCustomer) {
+		return suspendedCustomer != null && LocalTime.now().compareTo(((LocalTime) suspendedCustomer[1])) < 0;
 	}
 }
