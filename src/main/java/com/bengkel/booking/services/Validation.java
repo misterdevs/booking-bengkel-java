@@ -1,41 +1,26 @@
 package com.bengkel.booking.services;
 
-import java.util.Scanner;
+import java.time.LocalTime;
+import java.util.List;
+
+import com.bengkel.booking.models.Customer;
 
 public class Validation {
-	
-	public static String validasiInput(String question, String errorMessage, String regex) {
-	    Scanner input = new Scanner(System.in);
-	    String result;
-	    boolean isLooping = true;
-	    do {
-	      System.out.print(question);
-	      result = input.nextLine();
 
-	      //validasi menggunakan matches
-	      if (result.matches(regex)) {
-	        isLooping = false;
-	      }else {
-	        System.out.println(errorMessage);
-	      }
+	public static Boolean isValidUser(List<Customer> customers, String id) {
+		return UserService.getCustomerById(customers, id) != null;
+	}
 
-	    } while (isLooping);
+	public static Boolean isValidAuth(Customer customer, String password) {
+		return customer.getPassword().equals(password);
+	}
 
-	    return result;
-	  }
-	
-	public static int validasiNumberWithRange(String question, String errorMessage, String regex, int max, int min) {
-	    int result;
-	    boolean isLooping = true;
-	    do {
-	      result = Integer.valueOf(validasiInput(question, errorMessage, regex));
-	      if (result >= min && result <= max) {
-	        isLooping = false;
-	      }else {
-	        System.out.println("Pilihan angka " + min + " s.d " + max);
-	      }
-	    } while (isLooping);
+	public static Boolean isReachedLimitAttemptsAuth(int numbOfAttempts) {
+		int limitAttempts = 3;
+		return numbOfAttempts >= limitAttempts;
+	}
 
-	    return result;
-	  }
+	public static boolean isSuspendedUser(Object[] suspendedUser) {
+		return suspendedUser != null && LocalTime.now().compareTo(((LocalTime) suspendedUser[1])) < 0;
+	}
 }
