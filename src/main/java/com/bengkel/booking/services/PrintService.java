@@ -148,14 +148,19 @@ public class PrintService {
 
 		menu.printTable(headers, table -> {
 			int num = 1;
-			for (Vehicle vehicle : vehicles) {
-				table.addRow(num++, vehicle.getVehiclesId(), vehicle.getBrand(), vehicle.getColor(),
-						vehicle.getVehicleType() == "Motorcycle" ? ((Motorcycle) vehicle).getEngineCapacity() + "cc"
-								: "-",
-						vehicle.getVehicleType() == "Car" ? ((Car) vehicle).getNumberOfDoor() : "-",
-						vehicle.getTransmisionType(),
-						vehicle.getVehicleType(),
-						vehicle.getYearRelease());
+			if (vehicles.size() > 0) {
+				for (Vehicle vehicle : vehicles) {
+					table.addRow(num++, vehicle.getVehiclesId(), vehicle.getBrand(), vehicle.getColor(),
+							vehicle.getVehicleType() == "Motorcycle" ? ((Motorcycle) vehicle).getEngineCapacity() + "cc"
+									: "-",
+							vehicle.getVehicleType() == "Car" ? ((Car) vehicle).getNumberOfDoor() : "-",
+							vehicle.getTransmisionType(),
+							vehicle.getVehicleType(),
+							vehicle.getYearRelease());
+					table.addRule();
+				}
+			} else {
+				table.addRow(null, null, null, null, null, null, null, null, "Data tidak ditemukan");
 				table.addRule();
 			}
 			table.setTextAlignment(TextAlignment.CENTER);
@@ -168,12 +173,18 @@ public class PrintService {
 				"Total Pembayaran", "List Service" };
 		menu.printTable(headers, table -> {
 			int num = 1;
-			for (BookingOrder booking : bookingOrders) {
-				table.addRow(num++, booking.getBookingId(), booking.getCustomer().getName(), booking.getPaymentMethod(),
-						menu.rupiahFormatter((int) booking.getTotalServicePrice()),
-						menu.rupiahFormatter((int) booking.getDiscountCuts()),
-						menu.rupiahFormatter((int) booking.getTotalPayment()),
-						printServices(booking.getServices()));
+			if (bookingOrders.size() > 0) {
+				for (BookingOrder booking : bookingOrders) {
+					table.addRow(num++, booking.getBookingId(), booking.getCustomer().getName(),
+							booking.getPaymentMethod(),
+							menu.rupiahFormatter((int) booking.getTotalServicePrice()),
+							menu.rupiahFormatter((int) booking.getDiscountCuts()),
+							menu.rupiahFormatter((int) booking.getTotalPayment()),
+							printServices(booking.getServices()));
+					table.addRule();
+				}
+			} else {
+				table.addRow(null, null, null, null, null, null, null, "Data tidak ditemukan");
 				table.addRule();
 			}
 			table.setTextAlignment(TextAlignment.CENTER);
@@ -184,9 +195,14 @@ public class PrintService {
 		Object[] headers = { "No", "Service ID", "Nama Service", "Tipe Kendaraan", "Harga" };
 		menu.printTable(headers, table -> {
 			int num = 1;
-			for (ItemService service : services) {
-				table.addRow(num++, service.getServiceId(), service.getServiceName(), service.getVehicleType(),
-						menu.rupiahFormatter((int) service.getPrice()));
+			if (services.size() > 0) {
+				for (ItemService service : services) {
+					table.addRow(num++, service.getServiceId(), service.getServiceName(), service.getVehicleType(),
+							menu.rupiahFormatter((int) service.getPrice()));
+					table.addRule();
+				}
+			} else {
+				table.addRow(null, null, null, null, "Data tidak ditemukan");
 				table.addRule();
 			}
 			table.setTextAlignment(TextAlignment.CENTER);
