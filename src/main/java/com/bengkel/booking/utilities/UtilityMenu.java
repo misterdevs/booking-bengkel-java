@@ -42,7 +42,29 @@ public class UtilityMenu extends Utility {
         System.out.flush();
     }
 
-    public void createMenu(Consumer<String> function, String menuName, String[] menuArray,
+    public void createMenu(Consumer<String> function, String menuName, String menuSubName, String[] menuArray,
+            int navigationNumber, String navigationName) {
+        do {
+            resetDisplay();
+            if (menuSubName != null)
+                printTitleCustom(menuSubName, 1, 0);
+            printTitleCustom(menuName, 0, 1);
+            for (int i = 0; i < menuArray.length; i++) {
+                System.out.println((i + 1) + ". " + menuArray[i]);
+            }
+            if (navigationName != null) {
+                System.out.println(navigationNumber + ". " + navigationName);
+            }
+            System.out.println();
+            this.chosenMenu = input.validate("Pilih menu", "Menu yang dipilih tidak tersedia",
+                    s -> isNumberWithRange(s, 1, menuArray.length)
+                            || (isNumber(s) && Integer.valueOf(s) == navigationNumber));
+            function.accept(this.chosenMenu);
+        } while (Integer.valueOf(this.chosenMenu) != navigationNumber);
+
+    }
+
+    public void createMenuLegacy(Consumer<String> function, String menuName, String[] menuArray,
             int navigationNumber, String navigationName) {
         do {
             resetDisplay();
