@@ -4,11 +4,21 @@ import java.time.LocalTime;
 import java.util.List;
 
 import com.bengkel.booking.models.Customer;
+import com.bengkel.booking.models.MemberCustomer;
 
 public class Validation {
 
 	public static Boolean isValidUser(List<Customer> customers, String id) {
-		return UserService.getCustomerById(customers, id) != null;
+		return CustomerService.getCustomerById(customers, id) != null;
+	}
+
+	public static Boolean isValidTransaction(Customer customer, String paymentMethod) {
+		return paymentMethod == "Saldo Koin" ? isMember(customer) : isMember(customer);
+
+	}
+
+	public static Boolean isMember(Customer customer) {
+		return customer instanceof MemberCustomer;
 	}
 
 	public static Boolean isValidAuth(Customer customer, String password) {
