@@ -8,20 +8,24 @@ import com.bengkel.booking.models.ItemService;
 import com.bengkel.booking.models.MemberCustomer;
 import com.bengkel.booking.utilities.Utility;
 
-public class BengkelService {
+public class BookingOrderService {
 	private static Utility utility = new Utility();
 	private static int bookingIdNumber = 1;
 
 	public static BookingOrder createBooking(List<BookingOrder> listAllBookingOrder, Customer customer,
 			List<ItemService> services, String paymentMethod) {
+		// create bookingID pattern
 		String bookingIdPattern = "Book-'" + customer.getCustomerId() + "'-000";
+
+		// create booking order
 		BookingOrder booking = new BookingOrder(utility.createIdPattern(bookingIdPattern, bookingIdNumber++), customer,
 				services, paymentMethod, calculateTotalService(services));
 		listAllBookingOrder.add(booking);
+
+		// decrease balance if payment method using saldo koin
 		if (Validation.isMember(customer) && paymentMethod == getPaymentMethodById(2)) {
 			recalculateBalanceMember((MemberCustomer) customer, booking.getTotalPayment());
 		}
-
 		return booking;
 	}
 
@@ -40,17 +44,5 @@ public class BengkelService {
 	public static int getLimitChosenService(Customer customer) {
 		return customer.getMaxNumberOfService();
 	}
-
-	// Silahkan tambahkan fitur-fitur utama aplikasi disini
-
-	// Login
-
-	// Info Customer
-
-	// Booking atau Reservation
-
-	// Top Up Saldo Coin Untuk Member Customer
-
-	// Logout
 
 }

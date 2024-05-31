@@ -55,7 +55,11 @@ public class PrintService {
 		menu.printTitle("Booking Bengkel");
 		String vehicleId = input.validate("Masukkan Vehicle ID", "Vechile ID tidak ditemukan!",
 				s -> CustomerService.findVehicleCustomerByVehicleId(customer.getVehicles(), s) != null);
+
+		// initialize
 		Vehicle vehicle = CustomerService.findVehicleCustomerByVehicleId(customer.getVehicles(), vehicleId);
+		List<ItemService> servicesByType = ItemServiceService.getServiceByVehicleType(services,
+				vehicle.getVehicleType());
 
 		menu.resetDisplay();
 		menu.printTitle("Booking Bengkel");
@@ -68,12 +72,9 @@ public class PrintService {
 			table.getContext().setGridTheme(TA_GridThemes.NONE);
 			System.out.println(table.render());
 		});
-
-		List<ItemService> servicesByType = ItemServiceService.getServiceByVehicleType(services,
-				vehicle.getVehicleType());
 		printTableService(servicesByType);
 
-		int limitChosenService = BengkelService.getLimitChosenService(customer);
+		int limitChosenService = BookingOrderService.getLimitChosenService(customer);
 		boolean isClosed = false;
 		do {
 			ItemService chosenService = ItemServiceService.findServiceById(servicesByType,
@@ -93,16 +94,16 @@ public class PrintService {
 		System.out.println("(1) Cash");
 		if (Validation.isMember(customer))
 			System.out.println("(2) Saldo Koin");
-
 		int chosenPaymentMethod = Integer
 				.valueOf(input.validate("Pilih Metode Pembayaran", "Hanya masukkan angka yang tersedia.",
 						s -> menu.isNumber(s) && Integer.valueOf(s) == 1 || (Validation.isMember(customer)
 								? Integer.valueOf(s) == 2
 								: false)));
 
-		String paymentMethod = BengkelService.getPaymentMethodById(chosenPaymentMethod);
-		BookingOrder order = BengkelService.createBooking(bookingOrders, customer, chosenServices,
+		String paymentMethod = BookingOrderService.getPaymentMethodById(chosenPaymentMethod);
+		BookingOrder order = BookingOrderService.createBooking(bookingOrders, customer, chosenServices,
 				paymentMethod);
+
 		System.out.println("Booking Berhasil!");
 		menu.createTable(table -> {
 			table.addRow("Total Harga Service",
@@ -126,7 +127,10 @@ public class PrintService {
 			menu.printTitle("Topup Saldo Koin");
 			String value = input.validate("Masukkan nilai Topup", "Topup saldo mulai dari 1000",
 					s -> menu.isNumber(s) && Integer.valueOf(s) >= 1000);
+
+			// topup balance
 			CustomerService.topupSaldo((MemberCustomer) customer, Double.valueOf(value));
+
 			menu.resetDisplay();
 			menu.printTitleCustom(
 					"Topup saldo senilai " + menu.currencyFormatter(Integer.valueOf(value)) + " berhasil!", 2, 2);
@@ -189,6 +193,5 @@ public class PrintService {
 		});
 
 	}
-	// Silahkan Tambahkan function print sesuai dengan kebutuhan.
 
 }

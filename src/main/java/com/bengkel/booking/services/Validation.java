@@ -8,7 +8,7 @@ import com.bengkel.booking.models.MemberCustomer;
 
 public class Validation {
 
-	public static Boolean isValidUser(List<Customer> customers, String id) {
+	public static Boolean isValidCustomer(List<Customer> customers, String id) {
 		return CustomerService.getCustomerById(customers, id) != null;
 	}
 

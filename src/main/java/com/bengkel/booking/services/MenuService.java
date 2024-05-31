@@ -7,7 +7,6 @@ import java.util.List;
 import com.bengkel.booking.models.BookingOrder;
 import com.bengkel.booking.models.Customer;
 import com.bengkel.booking.models.ItemService;
-import com.bengkel.booking.models.Vehicle;
 import com.bengkel.booking.repositories.CustomerRepository;
 import com.bengkel.booking.repositories.ItemServiceRepository;
 import com.bengkel.booking.utilities.UtilityInput;
@@ -22,13 +21,12 @@ public class MenuService {
 	private static String appName = "Booking Bengkel";
 	private static String appSubName = "by MRDevs";
 
+	// login session variable
 	private static Customer loggedInCustomer = null;
 	private static boolean isLogin = false;
 	private static int numbOfAttempts = 1;
-	private static int suspendTime = 10; // in second
-	private static List<Object[]> suspendedCustomers = new ArrayList<Object[]>();
 
-	private static LocalTime suspendUntil = LocalTime.now().plusSeconds(-suspendTime);
+	private static List<Object[]> suspendedCustomers = new ArrayList<Object[]>();
 
 	public static void run() {
 		UtilityMenu menu = new UtilityMenu();
@@ -61,14 +59,16 @@ public class MenuService {
 		menu.resetDisplay();
 		menu.printTitleCustom("Login", 1, 0);
 		menu.printTitleCustom("Booking Bengkel", 0, 1);
+
 		if (Integer.valueOf(chosenMenu) != 0) {
 			numbOfAttempts = 1;
 			isLogin = true;
 
 			String customerId = input.validate("Masukkan Customer ID", "Customer ID tidak terdaftar!",
-					id -> Validation.isValidUser(listAllCustomers, id));
+					id -> Validation.isValidCustomer(listAllCustomers, id));
 
-			Object[] suspendedCustomer = AuthService.getSuspendedUserById(suspendedCustomers, customerId);
+			// check isSuspended customer
+			Object[] suspendedCustomer = AuthService.getSuspendedCustomerById(suspendedCustomers, customerId);
 			if (Validation.isSuspendedCustomer(suspendedCustomer)) {
 				System.out.println("Customer ID ini tersuspend. Coba lagi dalam "
 						+ AuthService.getLeftTimeSuspend((LocalTime) suspendedCustomer[1])
@@ -77,24 +77,28 @@ public class MenuService {
 				menu.enterToContinue();
 
 			} else {
+
+				// validate password
 				input.validate("Masukkan Password", "Password salah!",
 						pass -> {
-							boolean isValid = Validation
+							boolean isValidAuth = Validation
 									.isValidAuth(CustomerService.getCustomerById(listAllCustomers, customerId), pass);
-							if (Validation.isReachedLimitAttemptsAuth(numbOfAttempts) && !isValid) {
+							if (Validation.isReachedLimitAttemptsAuth(numbOfAttempts) && !isValidAuth) {
 								isLogin = false;
 								return true;
 							}
 							numbOfAttempts++;
-							return isValid;
+							return isValidAuth;
 						});
 
 				if (isLogin) {
+					// create session
 					loggedInCustomer = CustomerService.getCustomerById(listAllCustomers, customerId);
 				} else if (Validation.isReachedLimitAttemptsAuth(numbOfAttempts) && !isLogin) {
-					suspendUntil = LocalTime.now().plusSeconds(suspendTime);
-					suspendedCustomers.add(new Object[] { customerId, suspendUntil });
-					System.out.println("Percobaan sudah 3 kali. Coba lagi dalam " + suspendTime + " detik.");
+					// suspend customer
+					AuthService.suspendCustomer(suspendedCustomers, customerId);
+					System.out
+							.println("Percobaan sudah 3 kali. Coba lagi dalam " + AuthService.suspendTime + " detik.");
 					menu.enterToContinue();
 
 				}
@@ -114,7 +118,6 @@ public class MenuService {
 		switch (Integer.valueOf(chosenMenu)) {
 			case 1:
 				// panggil fitur Informasi Customer
-
 				PrintService.showCustomerProfile(loggedInCustomer);
 				menu.enterToContinue();
 				break;
@@ -134,6 +137,4 @@ public class MenuService {
 				break;
 		}
 	}
-
-	// Silahkan tambahkan kodingan untuk keperluan Menu Aplikasi
 }
