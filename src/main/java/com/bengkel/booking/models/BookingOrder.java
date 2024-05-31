@@ -11,25 +11,34 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookingOrder implements IBengkelPayment{
+public class BookingOrder implements IBengkelPayment {
 	private String bookingId;
 	private Customer customer;
 	private List<ItemService> services;
 	private String paymentMethod;
 	private double totalServicePrice;
 	private double totalPayment;
-	
-	@Override
-	public void calculatePayment() {
-		double discount = 0;
-		if (paymentMethod.equalsIgnoreCase("Saldo Coin")) {
-			discount = getTotalServicePrice() * RATES_DISCOUNT_SALDO_COIN;
-		}else {
-			discount = getTotalServicePrice() * RATES_DISCOUNT_CASH;
-		}
-		
-		setTotalPayment(getTotalServicePrice() - discount);
+	private double discountCuts = 0;
+
+	public BookingOrder(String bookingId, Customer customer, List<ItemService> services, String paymentMethod,
+			double totalServicePrice) {
+		this.bookingId = bookingId;
+		this.customer = customer;
+		this.services = services;
+		this.paymentMethod = paymentMethod;
+		this.totalServicePrice = totalServicePrice;
+		calculatePayment();
 	}
 
-	
+	@Override
+	public void calculatePayment() {
+		if (paymentMethod.equalsIgnoreCase("Saldo Koin")) {
+			discountCuts = getTotalServicePrice() * RATES_DISCOUNT_SALDO_COIN;
+		} else {
+			discountCuts = getTotalServicePrice() * RATES_DISCOUNT_CASH;
+		}
+
+		setTotalPayment(getTotalServicePrice() - discountCuts);
+	}
+
 }
