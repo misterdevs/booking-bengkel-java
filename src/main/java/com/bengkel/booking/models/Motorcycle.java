@@ -4,18 +4,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @NoArgsConstructor
 @Getter
 @Setter
-public class Motorcyle extends Vehicle {
+public class Motorcycle extends Vehicle {
 	private int engineCapacity;
 
-	public Motorcyle(String vehiclesId, String color, String brand, String transmisionType, int yearRelease,
+	public Motorcycle(String vehiclesId, String color, String brand, String transmisionType, int yearRelease,
 			int engineCapacity) {
-		super(vehiclesId, color, brand, transmisionType, yearRelease, "Motorcyle");
+		super(vehiclesId, color, brand, transmisionType, yearRelease, "Motorcycle");
 		this.engineCapacity = engineCapacity;
 	}
-	
-	
+
 }
