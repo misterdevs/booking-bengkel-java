@@ -75,21 +75,18 @@ public class PrintService {
 		});
 		printTableService(servicesByType);
 
-		int limitChosenService = BookingOrderService.getLimitChosenService(customer);
-		boolean isClosed = false;
-		do {
-			ItemService chosenService = ItemServiceService.findServiceById(servicesByType,
-					input.validate("Masukkan Service ID", "Service ID tidak ditemukan!",
-							s -> ItemServiceService.findServiceById(servicesByType, s) != null));
-
-			chosenServices.add(chosenService);
-			if (chosenServices.size() == limitChosenService) {
-				isClosed = true;
-			} else {
-				isClosed = !menu.confirmation("Ingin menambahkan Service lainnya?");
+		input.validateCustom("Masukkan Service ID", s -> {
+			ItemService chosenService = ItemServiceService.findServiceById(servicesByType, s);
+			if (chosenService == null) {
+				System.out.println("Service ID tidak ditemukan!");
+				return false;
 			}
-
-		} while (isClosed != true);
+			chosenServices.add(chosenService);
+			if (chosenServices.size() != BookingOrderService.getLimitChosenService(customer)) {
+				return !menu.confirmation("Ingin menambahkan Service lainnya?");
+			}
+			return true;
+		});
 
 		menu.resetDisplay();
 		menu.printTitle("Metode Pembayaran");
