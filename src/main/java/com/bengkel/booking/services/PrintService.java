@@ -112,6 +112,11 @@ public class PrintService {
 						System.out.println("Masukkan angka untuk metode pembayaran yang tersedia");
 						return false;
 					}
+					if (Integer.valueOf(s) == 2 && !Validation.isBalanceEnough((MemberCustomer) customer,
+							BookingOrderService.calculateTotalService(chosenServices))) {
+						System.out.println("Saldo tidak mencukupi, silahkan gunakan metode pembayaran yang lain");
+						return false;
+					}
 					return true;
 				}));
 
