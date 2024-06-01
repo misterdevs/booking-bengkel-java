@@ -95,10 +95,17 @@ public class PrintService {
 		if (Validation.isMember(customer))
 			System.out.println("(2) Saldo Koin");
 		int chosenPaymentMethod = Integer
-				.valueOf(input.validate("Pilih Metode Pembayaran", "Hanya masukkan angka yang tersedia.",
-						s -> menu.isNumber(s) && Integer.valueOf(s) == 1 || (Validation.isMember(customer)
-								? Integer.valueOf(s) == 2
-								: false)));
+				.valueOf(input.validateCustom("Pilih Metode Pembayaran", s -> {
+					if (!menu.isNumber(s)) {
+						System.out.println("Hanya dapat masukkan angka");
+						return false;
+					}
+					if (Integer.valueOf(s) != 1 && (Validation.isMember(customer) ? Integer.valueOf(s) != 2 : true)) {
+						System.out.println("Masukkan angka untuk metode pembayaran yang tersedia");
+						return false;
+					}
+					return true;
+				}));
 
 		String paymentMethod = BookingOrderService.getPaymentMethodById(chosenPaymentMethod);
 		BookingOrder order = BookingOrderService.createBooking(bookingOrders, customer, chosenServices,

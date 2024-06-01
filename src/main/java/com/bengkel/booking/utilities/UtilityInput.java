@@ -21,16 +21,24 @@ public class UtilityInput extends Utility {
     }
 
     public String validate(String inputName, String errorMessage, Predicate<String> condition) {
+        return validateCustom(inputName, s -> {
+            if (condition.test(s)) {
+                return true;
+            } else {
+                System.out.println(errorMessage);
+                return false;
+            }
+        });
+    }
+
+    public String validateCustom(String inputName, Predicate<String> function) {
         String input;
         while (true) {
             System.out.print(inputName + " : ");
             input = scanner.nextLine();
 
-            if (condition.test(input)) {
+            if (function.test(input))
                 break;
-            } else {
-                System.out.println(errorMessage);
-            }
         }
         return input;
     }
