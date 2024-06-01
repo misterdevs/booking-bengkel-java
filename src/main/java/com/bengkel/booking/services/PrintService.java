@@ -1,6 +1,7 @@
 package com.bengkel.booking.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.bengkel.booking.models.BookingOrder;
@@ -90,10 +91,17 @@ public class PrintService {
 
 		} while (isClosed != true);
 
-		System.out.println("Metode Pembayaran");
-		System.out.println("(1) Cash");
-		if (Validation.isMember(customer))
-			System.out.println("(2) Saldo Koin");
+		menu.resetDisplay();
+		menu.printTitle("Metode Pembayaran");
+		menu.createTable(table -> {
+			table.addRow("1. Cash");
+			if (Validation.isMember(customer)) {
+				table.addRow("2. Saldo Koin");
+			}
+			table.addRow("");
+			table.getContext().setGridTheme(TA_GridThemes.NONE);
+			System.out.println(table.render());
+		});
 		int chosenPaymentMethod = Integer
 				.valueOf(input.validateCustom("Pilih Metode Pembayaran", s -> {
 					if (!menu.isNumber(s)) {
@@ -111,8 +119,11 @@ public class PrintService {
 		BookingOrder order = BookingOrderService.createBooking(bookingOrders, customer, chosenServices,
 				paymentMethod);
 
-		System.out.println("Booking Berhasil!");
+		menu.resetDisplay();
+		menu.printTitle("Booking Berhasil!");
+		printTableBookingOrder(Arrays.asList(order));
 		menu.createTable(table -> {
+			table.addRow("Metode Pembayaran", ": " + paymentMethod);
 			table.addRow("Total Harga Service",
 					": " + menu.rupiahFormatter((int) order.getTotalServicePrice()));
 			table.addRow("Diskon", ": " + menu.rupiahFormatter((int) order.getDiscountCuts()));
