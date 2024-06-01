@@ -81,6 +81,10 @@ public class PrintService {
 				System.out.println("Service ID tidak ditemukan!");
 				return false;
 			}
+			if (ItemServiceService.findServiceById(chosenServices, s) != null) {
+				System.out.println("Item service telah dipilih!");
+				return false;
+			}
 			chosenServices.add(chosenService);
 			if (chosenServices.size() != BookingOrderService.getLimitChosenService(customer)) {
 				return !menu.confirmation("Ingin menambahkan Service lainnya?");
